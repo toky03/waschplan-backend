@@ -1,9 +1,11 @@
 package ch.bfh.control;
 
 import ch.bfh.dto.Buchung;
+import ch.bfh.dto.Mieter;
 import ch.bfh.dto.NotificationType;
 import ch.bfh.dto.NotifyMessage;
 import ch.bfh.entity.BuchungEntity;
+import ch.bfh.entity.MieterEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ public class WaschplanService {
     private NotifierService notifierService;
 
     private Map<UUID, BuchungEntity> buchungen = new ConcurrentHashMap<>();
+    private Map<UUID, MieterEntity> mieter = new ConcurrentHashMap<>();
 
     public List<Buchung> readBuchungen() {
         return buchungen.values().stream().map(Buchung::from).collect(Collectors.toUnmodifiableList());
@@ -42,8 +45,8 @@ public class WaschplanService {
         notifierService.broadcast(new NotifyMessage(NotificationType.UPDATE_BUCHUNG, buchung));
     }
 
-    public String readMieter() {
-        return "Hello Egli";
+    public List<Mieter> readMieter() {
+        return mieter.values().stream().map(Mieter::from).collect(Collectors.toUnmodifiableList());
     }
 
 }

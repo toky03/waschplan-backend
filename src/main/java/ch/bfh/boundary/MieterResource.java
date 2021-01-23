@@ -1,10 +1,12 @@
 package ch.bfh.boundary;
 
 import ch.bfh.control.WaschplanService;
+import ch.bfh.dto.Mieter;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 @Path("/mieter")
 public class MieterResource {
@@ -14,7 +16,7 @@ public class MieterResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String readMieter() {
+    public List<Mieter> readMieter() {
         return waschplanService.readMieter();
     }
 

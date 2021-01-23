@@ -20,4 +20,8 @@ public class Mieter {
     public UUID getId() { return id; }
 
     public String getName() { return name;}
+
+    public static Mieter from(MieterEntity mieterEntity) {
+        return new Mieter(mieterEntity.getId(), mieterEntity.getName());
+    }
 }
