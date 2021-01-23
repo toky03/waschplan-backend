@@ -42,4 +42,8 @@ public class WaschplanService {
         notifierService.broadcast(new NotifyMessage(NotificationType.UPDATE_BUCHUNG, buchung));
     }
 
+    public String readMieter() {
+        return "Hello Egli";
+    }
+
 }
