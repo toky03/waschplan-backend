@@ -1,6 +1,5 @@
 package ch.bfh.dto;
 
-
 import ch.bfh.entity.BuchungEntity;
 
 import java.time.LocalDateTime;
@@ -11,12 +10,12 @@ public class Buchung {
     private UUID id;
     private LocalDateTime buchungBeginn;
     private LocalDateTime buchungEnde;
-    private String partei;
+    private Mieter partei;
 
     public Buchung() {
     }
 
-    private Buchung(UUID id, LocalDateTime buchungBeginn, LocalDateTime buchungEnde, String partei) {
+    private Buchung(UUID id, LocalDateTime buchungBeginn, LocalDateTime buchungEnde, Mieter partei) {
         this.id = id;
         this.buchungBeginn = buchungBeginn;
         this.buchungEnde = buchungEnde;
@@ -35,7 +34,7 @@ public class Buchung {
         this.buchungEnde = buchungEnde;
     }
 
-    public void setPartei(String partei) {
+    public void setPartei(Mieter partei) {
         this.partei = partei;
     }
 
@@ -51,7 +50,7 @@ public class Buchung {
         return buchungEnde;
     }
 
-    public String getPartei() {
+    public Mieter getPartei() {
         return partei;
     }
 
