@@ -1,22 +1,15 @@
 package ch.bfh.entity;
 
+import lombok.Builder;
+import lombok.Value;
+
 import java.util.UUID;
 
+@Builder
+@Value
 public class MieterEntity {
 
-    private UUID id;
-    private String name;
+    UUID id;
+    String name;
 
-    public MieterEntity(UUID id, String name){
-        this.id = id;
-        this.name = name;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

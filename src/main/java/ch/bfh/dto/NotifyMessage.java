@@ -1,20 +1,22 @@
 package ch.bfh.dto;
 
+import lombok.Builder;
+
 public class NotifyMessage {
 
     private NotificationType notificationType;
-    private Buchung buchung;
+    private Termin termin;
 
-    public NotifyMessage(NotificationType notificationType, Buchung buchung) {
+    public NotifyMessage(NotificationType notificationType, Termin termin) {
         this.notificationType = notificationType;
-        this.buchung = buchung;
+        this.termin = termin;
     }
 
     public NotificationType getNotificationType() {
         return notificationType;
     }
 
-    public Buchung getBuchung() {
-        return buchung;
+    public Termin getTermin() {
+        return termin;
     }
 }

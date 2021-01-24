@@ -1,27 +1,22 @@
 package ch.bfh.dto;
 
 import ch.bfh.entity.MieterEntity;
+import lombok.*;
+
 import java.util.UUID;
 
+@Builder
+@Data
+@AllArgsConstructor
 public class Mieter {
 
-    private UUID id;
-    private String name;
+    UUID id;
+    String name;
 
-    public Mieter() {
-
-    }
-
-    private Mieter(UUID id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public UUID getId() { return id; }
-
-    public String getName() { return name;}
+    public Mieter(){}
 
     public static Mieter from(MieterEntity mieterEntity) {
-        return new Mieter(mieterEntity.getId(), mieterEntity.getName());
+        return builder().id(mieterEntity.getId())
+                .name(mieterEntity.getName()).build();
     }
 }
