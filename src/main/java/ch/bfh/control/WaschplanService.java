@@ -10,25 +10,57 @@ import ch.bfh.entity.MieterEntity;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
+import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WaschplanService {
 
+    String uuid1 = "1ad2c269-87bd-4344-b72a-769485d3b583";
+    String uuid2 = "53c2d8df-b43e-497b-80b3-9b021d38d2d2";
+    String uuid3 = "7a41a458-eeac-4572-a097-c134fd1ba71e";
+    String uuid4 = "ee2a7ed2-ffcf-46ba-b110-510212f6fe42";
+
+    LocalDate termin1 = LocalDate.parse("2021-02-09");
+    LocalDate termin2 = LocalDate.parse("2021-02-11");
+    LocalDate termin3 = LocalDate.parse("2021-02-12");
+    LocalDate termin4 = LocalDate.parse("2021-02-15");
+    LocalDate termin5 = LocalDate.parse("2021-02-19");
+    LocalDate termin6 = LocalDate.parse("2021-02-20");
+    LocalDate termin7 = LocalDate.parse("2021-02-23");
+    LocalDate termin8 = LocalDate.parse("2021-02-24");
+    LocalDate termin9 = LocalDate.parse("2021-02-25");
+
     @Inject
     private NotifierService notifierService;
 
     List<MieterEntity> mieterEntities = List.of(
-            MieterEntity.builder().id(UUID.randomUUID()).name("Beat & Lisa").build(),
-            MieterEntity.builder().id(UUID.randomUUID()).name("Familie Ramseier").build(),
-            MieterEntity.builder().id(UUID.randomUUID()).name("Hugo").build(),
-            MieterEntity.builder().id(UUID.randomUUID()).name("Frau Brönnimann").build());
+            MieterEntity.builder().id(UUID.fromString(uuid1)).name("Beat & Lisa").build(),
+            MieterEntity.builder().id(UUID.fromString(uuid2)).name("Familie Ramseier").build(),
+            MieterEntity.builder().id(UUID.fromString(uuid3)).name("Hugo").build(),
+            MieterEntity.builder().id(UUID.fromString(uuid4)).name("Frau Brönnimann").build());
 
-    private Map<UUID, TerminEntity> termine = new HashMap<>();
     private Map<UUID, MieterEntity> mieter = mieterEntities.stream().collect(Collectors.toMap(MieterEntity::getId, Function.identity()));
+
+    Mieter BeatLisa = findMieterById(UUID.fromString(uuid1));
+    Mieter FamilieRamseier = findMieterById(UUID.fromString(uuid2));
+    Mieter Hugo = findMieterById(UUID.fromString(uuid3));
+    Mieter FrauBroennimann = findMieterById(UUID.fromString(uuid4));
+
+    List<TerminEntity> terminEntities = List.of(
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin1.atStartOfDay()).terminEnde(termin1.atTime(23, 59, 59)).partei(BeatLisa).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin2.atStartOfDay()).terminEnde(termin2.atTime(23, 59, 59)).partei(FamilieRamseier).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin3.atStartOfDay()).terminEnde(termin3.atTime(23, 59, 59)).partei(Hugo).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin4.atStartOfDay()).terminEnde(termin4.atTime(23, 59, 59)).partei(FrauBroennimann).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin5.atStartOfDay()).terminEnde(termin5.atTime(23, 59, 59)).partei(BeatLisa).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin6.atStartOfDay()).terminEnde(termin6.atTime(23, 59, 59)).partei(FamilieRamseier).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin7.atStartOfDay()).terminEnde(termin7.atTime(23, 59, 59)).partei(FrauBroennimann).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin8.atStartOfDay()).terminEnde(termin8.atTime(23, 59, 59)).partei(Hugo).build(),
+            TerminEntity.builder().id(UUID.randomUUID()).terminBeginn(termin9.atStartOfDay()).terminEnde(termin9.atTime(23, 59, 59)).partei(FamilieRamseier).build());
+
+    private Map<UUID, TerminEntity> termine = terminEntities.stream().collect(Collectors.toMap(TerminEntity::getId, Function.identity()));
 
     public List<Termin> readTermine() {
         return termine.values().stream().map(Termin::from).collect(Collectors.toUnmodifiableList());
