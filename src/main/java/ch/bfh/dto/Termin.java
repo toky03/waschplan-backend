@@ -1,8 +1,10 @@
 package ch.bfh.dto;
 
 import ch.bfh.entity.TerminEntity;
+import ch.bfh.util.LocalDateTimeDeserializer;
 import lombok.*;
 
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,7 +14,9 @@ import java.util.UUID;
 public class Termin {
 
     UUID id;
+    @JsonbTypeDeserializer(LocalDateTimeDeserializer.class)
     LocalDateTime terminBeginn;
+    @JsonbTypeDeserializer(LocalDateTimeDeserializer.class)
     LocalDateTime terminEnde;
     UUID parteiId;
 
