@@ -12,7 +12,7 @@ public class WaschplanResourceTest {
     @Test
     public void testHelloEndpoint() {
         given()
-          .when().get("/waschplan")
+          .when().get("/termine")
           .then()
              .statusCode(200);
     }
