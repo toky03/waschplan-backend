@@ -66,11 +66,12 @@ public class WaschplanService {
         return termine.values().stream().map(Termin::from).collect(Collectors.toUnmodifiableList());
     }
 
-    public void createTermin(Termin termin) {
+    public String createTermin(Termin termin) {
         UUID uuid = UUID.randomUUID();
         TerminEntity terminEntity = termin.create(uuid, findMieterById(termin.getParteiId()));
         termine.put(uuid, terminEntity);
         notifierService.broadcast(new NotifyMessage(NotificationType.CREATE_BUCHUNG, termin));
+        return uuid.toString();
     }
 
     public void deleteTermin(UUID terminId) {

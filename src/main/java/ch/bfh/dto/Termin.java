@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Termin {
 
-    UUID id;
+    String id;
     @JsonbTypeDeserializer(LocalDateTimeDeserializer.class)
     LocalDateTime terminBeginn;
     @JsonbTypeDeserializer(LocalDateTimeDeserializer.class)
@@ -35,7 +35,7 @@ public class Termin {
     public TerminEntity merge(Mieter mieter) {
         return TerminEntity
                 .builder()
-                .id(id)
+                .id(UUID.fromString(id))
                 .terminBeginn(terminBeginn)
                 .terminEnde(terminEnde)
                 .partei(mieter)
@@ -46,7 +46,7 @@ public class Termin {
 
     public static Termin from(TerminEntity terminEntity) {
         return builder()
-                .id(terminEntity.getId())
+                .id(terminEntity.getId().toString())
                 .terminBeginn(terminEntity.getTerminBeginn())
                 .terminEnde(terminEntity.getTerminEnde())
                 .parteiId(terminEntity.getPartei().getId()).build();

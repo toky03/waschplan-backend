@@ -1,6 +1,7 @@
 package ch.bfh.boundary;
 
 import ch.bfh.control.WaschplanService;
+import ch.bfh.dto.ReplacedId;
 import ch.bfh.dto.Termin;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
@@ -29,8 +30,8 @@ public class WaschplanResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createBuchung(Termin termin) {
         try {
-            waschplanService.createTermin(termin);
-            return Response.status(Response.Status.CREATED).build();
+            String newId = waschplanService.createTermin(termin);
+            return Response.status(Response.Status.CREATED).entity(ReplacedId.builder().oldId(termin.getId()).newId(newId).build()).build();
         } catch (NotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
         }
