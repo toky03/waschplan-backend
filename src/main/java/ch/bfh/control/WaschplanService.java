@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -68,6 +69,7 @@ public class WaschplanService {
 
     public String createTermin(Termin termin) {
         UUID uuid = UUID.randomUUID();
+        checkConstraints(termin);
         TerminEntity terminEntity = termin.create(uuid, findMieterById(termin.getParteiId()));
         termine.put(uuid, terminEntity);
         notifierService.broadcast(new NotifyMessage(NotificationType.CREATE_BUCHUNG, termin));
@@ -81,6 +83,7 @@ public class WaschplanService {
     }
 
     public void updateTermin(UUID terminId, Termin termin) {
+        checkConstraints(termin);
         termine.put(terminId, termin.merge(findMieterById(termin.getParteiId())));
         notifierService.broadcast(new NotifyMessage(NotificationType.UPDATE_BUCHUNG, termin));
     }
@@ -89,12 +92,27 @@ public class WaschplanService {
         return mieter.values().stream().map(Mieter::from).collect(Collectors.toUnmodifiableList());
     }
 
-    private Mieter findMieterById(UUID parteiId){
+    private Mieter findMieterById(UUID parteiId) {
         MieterEntity partei = mieter.get(parteiId);
-        if(partei == null){
+        if (partei == null) {
             throw new NotFoundException(String.format("Mieter mit Id %s nicht gefunden", parteiId));
         }
         return Mieter.from(partei);
+    }
+
+    private void checkConstraints(Termin newTermin) {
+        List<Termin> termine = readTermine();
+        termine.forEach(existingTermin -> {
+            if (!existingTermin.getId().equals(newTermin.getId()) && isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
+                    isBetween(newTermin.getTerminEnde(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde())) {
+                throw new ConcurrentModificationException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden");
+            }
+        });
+
+    }
+
+    private boolean isBetween(LocalDateTime termin, LocalDateTime startTermin, LocalDateTime endTermin) {
+        return termin.isAfter(startTermin) && termin.isBefore(endTermin);
     }
 
 }
