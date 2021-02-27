@@ -95,7 +95,7 @@ public class WaschplanService {
     private Mieter findMieterById(UUID parteiId) {
         MieterEntity partei = mieter.get(parteiId);
         if (partei == null) {
-            throw new NotFoundException(String.format("Mieter mit Id %s nicht gefunden", parteiId));
+            throw new RuntimeException(String.format("Mieter mit Id %s nicht gefunden", parteiId));
         }
         return Mieter.from(partei);
     }
@@ -103,16 +103,17 @@ public class WaschplanService {
     private void checkConstraints(Termin newTermin) {
         List<Termin> termine = readTermine();
         termine.forEach(existingTermin -> {
-            if (!existingTermin.getId().equals(newTermin.getId()) && isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
+            if (!existingTermin.getId().equals(newTermin.getId()) &&
+                    isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
                     isBetween(newTermin.getTerminEnde(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde())) {
-                throw new ConcurrentModificationException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden");
+                throw new RuntimeException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden");
             }
         });
 
     }
 
     private boolean isBetween(LocalDateTime termin, LocalDateTime startTermin, LocalDateTime endTermin) {
-        return termin.isAfter(startTermin) && termin.isBefore(endTermin);
+        return (termin.equals(startTermin) || termin.isAfter(startTermin)) && (termin.equals(endTermin) || termin.isBefore(endTermin));
     }
 
 }

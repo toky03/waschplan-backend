@@ -7,6 +7,8 @@ import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Info;
 
 import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -31,15 +33,9 @@ public class WaschplanResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createBuchung(Termin termin) {
-        try {
-            String newId = waschplanService.createTermin(termin);
-            return Response.status(Response.Status.CREATED).entity(ReplacedId.builder().oldId(termin.getId()).newId(newId).build()).build();
-        } catch (NotFoundException  e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
-        } catch (ConcurrentModificationException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
-        }
+    public ReplacedId createBuchung(Termin termin) {
+        String newId = waschplanService.createTermin(termin);
+        return ReplacedId.builder().newId(newId).oldId(termin.getId()).build();
     }
 
     @Path("{terminId}")
