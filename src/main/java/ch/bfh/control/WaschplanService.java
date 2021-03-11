@@ -9,15 +9,17 @@ import ch.bfh.entity.MieterEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WaschplanService {
+
+    private static final DateTimeFormatter PRETTY_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     String uuid1 = "1ad2c269-87bd-4344-b72a-769485d3b583";
     String uuid2 = "53c2d8df-b43e-497b-80b3-9b021d38d2d2";
@@ -36,6 +38,8 @@ public class WaschplanService {
 
     @Inject
     private NotifierService notifierService;
+    @Inject
+    private FcmService fcmService;
 
     List<MieterEntity> mieterEntities = List.of(
             MieterEntity.builder().id(UUID.fromString(uuid1)).name("Beat & Lisa").build(),
@@ -77,9 +81,13 @@ public class WaschplanService {
     }
 
     public void deleteTermin(UUID terminId) {
-        Termin termin = Termin.from(termine.get(terminId));
-        termine.remove(terminId);
-        notifierService.broadcast(new NotifyMessage(NotificationType.DELETE_BUCHUNG, termin));
+        TerminEntity terminEntity = termine.get(terminId);
+        if(terminEntity != null){
+            Termin termin = Termin.from(termine.get(terminId));
+            termine.remove(terminId);
+            fcmService.sendMessage("Termin wurde frei", createMessage(termin));
+            notifierService.broadcast(new NotifyMessage(NotificationType.DELETE_BUCHUNG, termin));
+        }
     }
 
     public void updateTermin(UUID terminId, Termin termin) {
@@ -90,6 +98,13 @@ public class WaschplanService {
 
     public List<Mieter> readMieter() {
         return mieter.values().stream().map(Mieter::from).collect(Collectors.toUnmodifiableList());
+    }
+
+    private String createMessage(Termin termin) {
+        return String.format("Termin vom %s bis %s von %s wurde entfernt",
+                termin.getTerminBeginn().format(PRETTY_TIME_FORMAT),
+                termin.getTerminEnde().format(PRETTY_TIME_FORMAT),
+                findMieterById(termin.getParteiId()).getName());
     }
 
     private Mieter findMieterById(UUID parteiId) {

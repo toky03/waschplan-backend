@@ -1,7 +1,5 @@
 package ch.bfh.dto;
 
-import lombok.Builder;
-
 public class NotifyMessage {
 
     private NotificationType notificationType;

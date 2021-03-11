@@ -18,7 +18,6 @@ public class NotifierService {
 
     Map<UUID, Session> sessions = new ConcurrentHashMap<>();
 
-
     @OnOpen
     public void onOpen(Session session, @PathParam("sessionId") String sessionId) {
         sessions.put(UUID.fromString(sessionId), session);
