@@ -76,7 +76,7 @@ public class WaschplanService {
         checkConstraints(termin);
         TerminEntity terminEntity = termin.create(uuid, findMieterById(termin.getParteiId()));
         termine.put(uuid, terminEntity);
-        notifierService.broadcast(new NotifyMessage(NotificationType.CREATE_BUCHUNG, termin));
+        notifierService.broadcast(new NotifyMessage(NotificationType.CREATE_BUCHUNG, Termin.from(terminEntity)));
         return uuid.toString();
     }
 
@@ -118,13 +118,12 @@ public class WaschplanService {
     private void checkConstraints(Termin newTermin) {
         List<Termin> termine = readTermine();
         termine.forEach(existingTermin -> {
-            if (!existingTermin.getId().equals(newTermin.getId()) &&
-                    isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
-                    isBetween(newTermin.getTerminEnde(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde())) {
+            if ((!existingTermin.getId().equals(newTermin.getId())) &&
+                    (isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
+                    isBetween(newTermin.getTerminEnde(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()))) {
                 throw new RuntimeException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden");
             }
         });
-
     }
 
     private boolean isBetween(LocalDateTime termin, LocalDateTime startTermin, LocalDateTime endTermin) {

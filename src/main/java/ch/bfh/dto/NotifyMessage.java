@@ -1,5 +1,8 @@
 package ch.bfh.dto;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+@RegisterForReflection
 public class NotifyMessage {
 
     private NotificationType notificationType;

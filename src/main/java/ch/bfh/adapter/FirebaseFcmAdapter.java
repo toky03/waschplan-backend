@@ -10,6 +10,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -31,10 +32,14 @@ public class FirebaseFcmAdapter {
 
     public void sendNotification(FcmMessage fcmMessage) {
         FcmResponse response = httpClient.target(fcmUrl).request(MediaType.APPLICATION_JSON_TYPE).header(AUTH_HEADER, KEY_PREFIX + fcmKey).post(Entity.json(fcmMessage), FcmResponse.class);
-        if(response.getFailure() == 0){
+        if (response.getFailure() == 0) {
             logger.info("sent Notification to fcm sucessfully");
         } else {
-            logger.warning("send Fcm Message failed " + response.getResults().stream().map(FcmResult::getError).collect(Collectors.joining(", ")));
+            logger.warning("send Fcm Message failed " + response.getResults()
+                    .stream()
+                    .map(FcmResult::getError)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(", ")));
         }
     }
 }

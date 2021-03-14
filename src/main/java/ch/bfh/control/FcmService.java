@@ -39,17 +39,17 @@ public class FcmService {
         if (registeredIds.isEmpty()) {
             return;
         }
-        new Thread(() -> {
-            FcmMessage fcmMessage = FcmMessage.builder()
-                    .notification(FcmNotificationBody.builder()
-                            .title(title)
-                            .body(messageBody)
-                            .build())
-                    .registrationIds(registeredIds)
-                    .build();
-            firebaseFcmAdapter.sendNotification(fcmMessage);
-        }).start();
-
+        registeredIds.forEach((token) -> {
+            new Thread(() -> {
+                FcmMessage fcmMessage = FcmMessage.builder()
+                        .notification(FcmNotificationBody.builder()
+                                .title(title)
+                                .body(messageBody)
+                                .build())
+                        .registrationIds(Set.of(token))
+                        .build();
+                firebaseFcmAdapter.sendNotification(fcmMessage);
+            }).start();
+        });
     }
-
 }
