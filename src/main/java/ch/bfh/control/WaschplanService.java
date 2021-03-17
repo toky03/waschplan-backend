@@ -9,6 +9,8 @@ import ch.bfh.entity.MieterEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -82,7 +84,7 @@ public class WaschplanService {
 
     public void deleteTermin(UUID terminId) {
         TerminEntity terminEntity = termine.get(terminId);
-        if(terminEntity != null){
+        if (terminEntity != null) {
             Termin termin = Termin.from(termine.get(terminId));
             termine.remove(terminId);
             fcmService.sendMessage("Termin wurde frei", createMessage(termin));
@@ -110,7 +112,7 @@ public class WaschplanService {
     private Mieter findMieterById(UUID parteiId) {
         MieterEntity partei = mieter.get(parteiId);
         if (partei == null) {
-            throw new RuntimeException(String.format("Mieter mit Id %s nicht gefunden", parteiId));
+            throw new WebApplicationException(String.format("Mieter mit Id %s nicht gefunden", parteiId), Response.Status.BAD_REQUEST);
         }
         return Mieter.from(partei);
     }
@@ -118,12 +120,16 @@ public class WaschplanService {
     private void checkConstraints(Termin newTermin) {
         List<Termin> termine = readTermine();
         termine.forEach(existingTermin -> {
-            if ((!existingTermin.getId().equals(newTermin.getId())) &&
-                    (isBetween(newTermin.getTerminBeginn(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()) ||
-                    isBetween(newTermin.getTerminEnde(), existingTermin.getTerminBeginn(), existingTermin.getTerminEnde()))) {
-                throw new RuntimeException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden");
+            if ((!existingTermin.getId().equals(newTermin.getId())) && (
+                    isOverlapping(newTermin, existingTermin) || isOverlapping(existingTermin, newTermin))) {
+                throw new WebApplicationException("Der Termin überschneidet sich mit einem anderen Termin und kann deshalb nicht gespeichert werden", Response.Status.BAD_REQUEST);
             }
         });
+    }
+
+    private boolean isOverlapping(Termin a, Termin b){
+        return (isBetween(a.getTerminBeginn(), b.getTerminBeginn(), b.getTerminEnde()) ||
+                isBetween(a.getTerminEnde(), b.getTerminBeginn(), b.getTerminEnde()));
     }
 
     private boolean isBetween(LocalDateTime termin, LocalDateTime startTermin, LocalDateTime endTermin) {

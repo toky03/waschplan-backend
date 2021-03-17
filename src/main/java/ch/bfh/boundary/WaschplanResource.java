@@ -33,9 +33,16 @@ public class WaschplanResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public ReplacedId createBuchung(Termin termin) {
-        String newId = waschplanService.createTermin(termin);
-        return ReplacedId.builder().newId(newId).oldId(termin.getId()).build();
+    public Response createBuchung(Termin termin) {
+        try{
+            String newId = waschplanService.createTermin(termin);
+            ReplacedId replacedId = ReplacedId.builder().newId(newId).oldId(termin.getId()).build();
+            return Response.status(Response.Status.CREATED).entity(replacedId).type(MediaType.APPLICATION_JSON).build();
+        } catch (WebApplicationException ex){
+            return Response.status(ex.getResponse().getStatus()).entity(ex.getMessage()).type(MediaType.TEXT_PLAIN).build();
+        }
+
+
     }
 
     @Path("{terminId}")
@@ -45,8 +52,8 @@ public class WaschplanResource {
         try {
             waschplanService.updateTermin(terminId, termin);
             return Response.status(Response.Status.CREATED).build();
-        } catch (NotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).type(MediaType.TEXT_PLAIN).build();
+        } catch (WebApplicationException ex) {
+            return Response.status(ex.getResponse().getStatus()).entity(ex.getMessage()).type(MediaType.TEXT_PLAIN).build();
         }
     }
 

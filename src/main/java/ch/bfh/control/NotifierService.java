@@ -34,12 +34,19 @@ public class NotifierService {
     }
 
     public void broadcast(NotifyMessage message) {
-        sessions.values().forEach(s -> {
-            s.getAsyncRemote().sendObject(message, result ->  {
-                if (result.getException() != null) {
-                    System.out.println("Unable to send message: " + result.getException());
-                }
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            sessions.values().forEach(s -> {
+                s.getAsyncRemote().sendObject(message, result ->  {
+                    if (result.getException() != null) {
+                        System.out.println("Unable to send message: " + result.getException());
+                    }
+                });
             });
-        });
+        }).start();
     }
 }
