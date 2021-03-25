@@ -36,7 +36,7 @@ public class NotifierService {
     public void broadcast(NotifyMessage message) {
         new Thread(() -> {
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

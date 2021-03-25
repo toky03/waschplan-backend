@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class WaschplanService {
 
-    private static final DateTimeFormatter PRETTY_TIME_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter PRETTY_DATE_TIME_FORMAT =  DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+    private static final DateTimeFormatter PRETTY_DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter PRETTY_TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     String uuid1 = "1ad2c269-87bd-4344-b72a-769485d3b583";
     String uuid2 = "53c2d8df-b43e-497b-80b3-9b021d38d2d2";
@@ -87,7 +89,7 @@ public class WaschplanService {
         if (terminEntity != null) {
             Termin termin = Termin.from(termine.get(terminId));
             termine.remove(terminId);
-            fcmService.sendMessage("Termin wurde frei", createMessage(termin));
+            fcmService.sendMessage("Waschplan Termin wurde frei", createMessage(termin));
             notifierService.broadcast(new NotifyMessage(NotificationType.DELETE_BUCHUNG, termin));
         }
     }
@@ -103,9 +105,20 @@ public class WaschplanService {
     }
 
     private String createMessage(Termin termin) {
-        return String.format("Waschplan Termin vom %s bis %s von %s wurde entfernt",
-                termin.getTerminBeginn().format(PRETTY_TIME_FORMAT),
-                termin.getTerminEnde().format(PRETTY_TIME_FORMAT),
+        String startDate;
+        String endDate;
+        LocalDateTime startTermin = termin.getTerminBeginn();
+        LocalDateTime endTermin = termin.getTerminEnde();
+        if(startTermin.toLocalDate().equals(endTermin.toLocalDate())){
+            startDate = startTermin.toLocalDate().format(PRETTY_DATE_FORMAT) +" "+ startTermin.format(PRETTY_TIME_FORMAT);
+            endDate = endTermin.format(PRETTY_TIME_FORMAT);
+        } else {
+            startDate = startTermin.format(PRETTY_DATE_TIME_FORMAT);
+            endDate = endTermin.format(PRETTY_DATE_TIME_FORMAT);
+        }
+        return String.format("Termin vom %s bis %s von %s wurde entfernt",
+                startDate,
+                endDate,
                 findMieterById(termin.getParteiId()).getName());
     }
 

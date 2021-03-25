@@ -7,7 +7,7 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native -t toky03/waschplan-backend:0.0.15 .
+# docker build -f src/main/docker/Dockerfile.native -t toky03/waschplan-backend:0.0.18 .
 #
 # Then run the container using:
 #
