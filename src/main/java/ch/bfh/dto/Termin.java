@@ -4,6 +4,8 @@ import ch.bfh.entity.TerminEntity;
 import ch.bfh.util.LocalDateTimeDeserializer;
 import lombok.*;
 
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -50,5 +52,10 @@ public class Termin {
                 .terminBeginn(terminEntity.getTerminBeginn())
                 .terminEnde(terminEntity.getTerminEnde())
                 .parteiId(terminEntity.getPartei().getId()).build();
+    }
+
+    public String toJson(){
+        Jsonb jsonb = JsonbBuilder.create();
+        return jsonb.toJson(this);
     }
 }

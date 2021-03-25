@@ -64,4 +64,5 @@ public class WaschplanResource {
     public void deleteBuchung(@PathParam("terminId") UUID terminId) {
         waschplanService.deleteTermin(terminId);
     }
+
 }
