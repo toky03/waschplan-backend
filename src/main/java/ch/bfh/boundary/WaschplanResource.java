@@ -1,6 +1,7 @@
 package ch.bfh.boundary;
 
 import ch.bfh.control.WaschplanService;
+import ch.bfh.dto.ErrorMessage;
 import ch.bfh.dto.ReplacedId;
 import ch.bfh.dto.Termin;
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
@@ -39,7 +40,7 @@ public class WaschplanResource {
             ReplacedId replacedId = ReplacedId.builder().newId(newId).oldId(termin.getId()).build();
             return Response.status(Response.Status.CREATED).entity(replacedId).type(MediaType.APPLICATION_JSON).build();
         } catch (WebApplicationException ex){
-            return Response.status(ex.getResponse().getStatus()).entity(ex.getMessage()).type(MediaType.TEXT_PLAIN).build();
+            return Response.status(ex.getResponse().getStatus()).entity(ErrorMessage.builder().message(ex.getMessage()).build()).type(MediaType.APPLICATION_JSON).build();
         }
 
 
@@ -53,7 +54,7 @@ public class WaschplanResource {
             waschplanService.updateTermin(terminId, termin);
             return Response.status(Response.Status.CREATED).build();
         } catch (WebApplicationException ex) {
-            return Response.status(ex.getResponse().getStatus()).entity(ex.getMessage()).type(MediaType.TEXT_PLAIN).build();
+            return Response.status(ex.getResponse().getStatus()).entity(ErrorMessage.builder().message(ex.getMessage()).build()).type(MediaType.APPLICATION_JSON).build();
         }
     }
 

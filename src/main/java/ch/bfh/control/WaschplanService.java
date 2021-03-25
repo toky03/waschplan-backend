@@ -103,7 +103,7 @@ public class WaschplanService {
     }
 
     private String createMessage(Termin termin) {
-        return String.format("Termin vom %s bis %s von %s wurde entfernt",
+        return String.format("Waschplan Termin vom %s bis %s von %s wurde entfernt",
                 termin.getTerminBeginn().format(PRETTY_TIME_FORMAT),
                 termin.getTerminEnde().format(PRETTY_TIME_FORMAT),
                 findMieterById(termin.getParteiId()).getName());
