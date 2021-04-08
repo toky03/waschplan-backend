@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceNames.backend }}
+  labels:
+    app: waschplan
+spec:
+  selector:
+    app: waschplan
+    tier: backend
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: {{ .Values.nodePorts.backend }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waschplan-backend-deployment
+  labels:
+    app: waschplan
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: waschplan
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: waschplan
+        tier: backend
+    spec:
+      containers:
+        - name: waschplan-backend-container
+          image: {{ .Values.images.backend}}
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+
+

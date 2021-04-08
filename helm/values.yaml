@@ -1,0 +1,9 @@
+images:
+    backend: toky03/waschplan-backend:0.0.26
+    frontend: toky03/waschplan-frontend:0.0.20
+serviceNames:
+    backend: waschplan-backend-svc
+    frontend: waschplan-frontend-svc
+nodePorts:
+    backend: "32401"
+    frontend: "32400"

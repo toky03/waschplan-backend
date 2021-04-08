@@ -85,10 +85,6 @@ public class WaschplanService {
     }
 
     public void deleteTermin(UUID terminId) {
-        if(terminId.equals(UUID.fromString("1ad2c269-87bd-4344-b72a-769485d3b583")) && !termine.isEmpty()){
-            termine.clear();
-            return;
-        }
         TerminEntity terminEntity = termine.get(terminId);
         if (terminEntity != null) {
             Termin termin = Termin.from(termine.get(terminId));
