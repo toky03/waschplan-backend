@@ -12,11 +12,11 @@ You can run your application in dev mode that enables live coding using:
 
 ## Build a small Docker image
 
-### Build the native executable
+### 1. Build the native executable
 ```shell script
 ./mvnw package -Pnative
 ```
-### Build the Docker image
+### 2. Build the Docker image
 ```shell script
 docker build -f src/main/docker/Dockerfile.native -t toky03/waschplan-backend:0.0.27 .
 ```
